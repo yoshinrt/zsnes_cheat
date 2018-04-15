@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-require 'pl2cht.pl';
+require './pl2cht.pl';
 
 Cheat( << '-----' );
 @7ECF14

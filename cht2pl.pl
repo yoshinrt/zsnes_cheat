@@ -4,7 +4,7 @@ open( fpIn, "< $ARGV[0]" ) || die( "Can't open file '$ARGV[0]'\n" );
 
 print( << '-----' );
 #!/usr/bin/perl -w
-require 'pl2cht.pl';
+require './pl2cht.pl';
 Cheat( << '-----' );
 -----
 

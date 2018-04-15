@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-require 'pl2cht.pl';
+require './pl2cht.pl';
 Cheat( << '-----' );
 @7E1969	63		'ITEM 1
 @7E1860	FFFF FF	'MONEY
