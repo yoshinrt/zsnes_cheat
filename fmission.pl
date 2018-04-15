@@ -1,0 +1,46 @@
+#!/usr/bin/perl -w
+require 'pl2cht.pl';
+
+Cheat( << '-----' );
+@7ECF14
+63	'ZENITH BODY
+63	'ZENITH ARM L
+63	'ZENITH ARM R
+63	'ZENITH LEG
+
+@7ED12A 63	'SI DB-6KR
+@7ED080 63	'FV-24B
+@7ED0E6 63	'ALBATROSS
+@7ED0CE 63	'WS-14B
+@7ED0F7 63	'BAG WORM
+@7ED187 63	'REPAIR SP
+
+# @7ED696 7530	'CURREN BODY
+# @7ED69C 7530	'CURREN ARM
+# @7ED6A8 7530	'CURREN LEG
+# @7ED6A2 7530	'CURREN ARM
+# @7ED675 270F	'CURREN EXP
+# @7EB6C7
+-----
+
+for( $i = 0; $i < 17; ++$i ){
+	$Addr = 0x7ED1D1 + 0x22 * $i;
+	Cheat( "270F 270F 270F 270F 16 17 09 18 07	'EXP" );
+}
+
+for( $i = 0; $i < 17; ++$i ){
+	$Addr = 0x7EB6C7 + 0x32 * $i;
+	Cheat( << '-----' );
+	D6 +01	'BODY
+	D7 +01	'ARM L
+	D8 +01	'ARM R
+	D9 +01	'LEG
+	DA +01	'LEG
+	0242	'AW
+	0243	'AW
+	02A8	'WC
+	02A9	'WC
+	02EC	'CPU
+	02B9	'BAG WORM
+-----
+}
