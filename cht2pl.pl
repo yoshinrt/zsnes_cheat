@@ -14,65 +14,51 @@ while( read( fpIn, $_, 28 ) == 28 ){
 	$Addr &= 0xFFFFFF;
 	$Comment =~ s/\x00.*//g;
 	
-	push( @Data, [ $Addr, $Val, $Comment ] );
+	push( @Data, { Addr => $Addr, Val => $Val, Comment => $Comment });
 }
 
 $Addr = 0;
 
-for( $i = 0; $i <= $#Data; ++$i ){
-	if(
-		defined( $Data[ $i + 1 ] ) &&
-		$Data[ $i ][ 0 ] + 1 == $Data[ $i + 1 ][ 0 ] &&
-		uc $Data[ $i ][ 2 ] eq uc $Data[ $i + 1 ][ 2 ]
-	){
-		if(
-			defined( $Data[ $i + 3 ] ) &&
-			$Data[ $i ][ 0 ] + 2 == $Data[ $i + 2 ][ 0 ] &&
-			uc $Data[ $i ][ 2 ] eq uc $Data[ $i + 2 ][ 2 ] &&
-			$Data[ $i ][ 0 ] + 3 == $Data[ $i + 3 ][ 0 ] &&
-			uc $Data[ $i ][ 2 ] eq uc $Data[ $i + 3 ][ 2 ]
-		){
-			# 4B パック
-			$Val = sprintf( '%08X',
-				( $Data[ $i + 0 ][ 1 ] <<  0 ) |
-				( $Data[ $i + 1 ][ 1 ] <<  8 ) |
-				( $Data[ $i + 2 ][ 1 ] << 16 ) |
-				( $Data[ $i + 3 ][ 1 ] << 24 )
-			);
-			$Size = 4;
-		}else{
-			# 2B パック
-			$Val = sprintf( '%04X',
-				( $Data[ $i + 0 ][ 1 ] <<  0 ) |
-				( $Data[ $i + 1 ][ 1 ] <<  8 )
-			);
-			$Size = 2;
-		}
-	}else{
-		# 1B
-		$Val = sprintf( '%02X',
-			( $Data[ $i + 0 ][ 1 ] <<  0 )
+for( $i = 0; $i <= $#Data; ){
+	
+	$Val = sprintf( "%02X", $Data[ $i ]{ Val });
+	
+	for( $Size = 1; $i + $Size <= $#Data; ++$Size ){
+		last if(
+			$Data[ $i ]{ Addr } + $Size != $Data[ $i + $Size ]{ Addr } ||
+			$Data[ $i ]{ Comment } ne $Data[ $i + $Size ]{ Comment }
 		);
-		$Size = 1;
+		
+		$Val .= sprintf( "%02X", $Data[ $i + $Size ]{ Val });
 	}
 	
 	# アドレス
-	if( $Addr != $Data[ $i ][ 0 ] ){
-		printf( "@%X", $Data[ $i ][ 0 ] );
-		$Addr = $Data[ $i ][ 0 ];
+	if( $Addr != $Data[ $i ]{ Addr } ){
+		if( $Data[ $i ]{ Addr } < $Addr || $Data[ $i ]{ Addr } > $Addr + 16 ){
+			printf( "@%X", $Data[ $i ]{ Addr } );
+		}else{
+			printf( "+%X", $Data[ $i ]{ Addr } - $Addr );
+		}
+		$Addr = $Data[ $i ]{ Addr };
 	}
 	
 	# データ
-	print( "\t$Val" );
+	print( "\t" );
+	
+	while( $Val ){
+		$Val =~ s/(..)(..)?(..)?(..)?(.*)/$5/;
+		print(( $4 || '' ) . ( $3 || '' ) . ( $2 || '' ) . $1 );
+		print( ' ' ) if( $Val );
+	}
 	
 	# コメント
-	if( $Data[ $i ][ 2 ] ne '' ){
-		print( "\t'$Data[ $i ][ 2 ]\n" );
+	if( $Data[ $i ]{ Comment } ne '' ){
+		print( "\t'$Data[ $i ]{ Comment }\n" );
 	}else{
 		print( "\n" );
 	}
 	
 	$Addr += $Size;
-	$i += $Size - 1;
+	$i += $Size;
 }
 print( "-----\n" );

@@ -69,10 +69,8 @@ sub ToNum {
 			uc $1 eq 'd' ? 4 : undef
 		);
 	}else{
-		return ( eval( "0x$_" ),
-			length( $_ ) >= 8 ? 4 :
-			length( $_ ) >= 4 ? 2 : 1
-		);
+		my $len = ~~(( length( $_ ) + 1 ) / 2 );
+		return ( hex( $_ ), $len > 4 ? 4 : $len );
 	}
 }
 

@@ -1,7 +1,7 @@
 # zsnes_cheat
 ---
 
-zsnes のチートファイル (.cht) を楽に作るための perl スクリプトスクリプト．
+zsnes のチートファイル (.cht) を楽に作るための perl スクリプト．
 
 また，.cht を perl スクリプトに変換する．
 
@@ -20,7 +20,7 @@ zsnes のチートファイル (.cht) を楽に作るための perl スクリプ
 
 ```
 #!/usr/bin/perl -w
-require 'pl2cht.pl';
+require './pl2cht.pl';
 
 Cheat( command_string );
 ```
